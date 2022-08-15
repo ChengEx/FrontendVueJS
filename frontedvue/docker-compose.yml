@@ -1,0 +1,7 @@
+version: "3"
+services:
+  nginx:
+    image: denoriaaa/vue-nginx0.0.4
+    restart: always
+    ports:
+      - "80:80"
