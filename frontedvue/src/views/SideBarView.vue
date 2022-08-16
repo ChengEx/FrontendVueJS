@@ -76,7 +76,7 @@
 #rightPage {
     margin-left: 350px;
     margin-top: 50px;
-    padding: 50px;
+    padding-top: 50px;
     width:100%;
 }
 .sidebar_btn {

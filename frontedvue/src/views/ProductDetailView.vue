@@ -106,7 +106,7 @@ import { useStore } from 'vuex';
                     productId: product.getProduct._id
                 }).then(res=> {
                     console.log("res is here",res?.data?.returnObj);
-                    router.push(`/sellerChat/${res?.data?.returnObj._id}`);
+                    router.push(`/sellerChat/${res?.data?.returnObj.productId}`);
                 })
 
             }

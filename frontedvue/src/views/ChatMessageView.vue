@@ -10,11 +10,12 @@
         setup() {
             const store = useStore();
             const currentChatRoom = ref(null);
+            const currentUserId = store.getters['user']?.studentObj?._id;
             const chatroomList = reactive({
                 list:[{
                     id:'',
-                    user1:{},
-                    user2:{},
+                    user1Id:{},
+                    user2Id:{},
                     message:[{
                         userid:'',
                         time:'',
@@ -22,70 +23,102 @@
                 }]
             })
             onMounted(async() =>{
-                // await getChatRoomByUserId({
-                //     userId: store.getters['user']?.studentObj?._id
-                // }).then(res=> {
-                //     chatroomList.list = res?.data?.list;
-                // })
+                await getChatRoomByUserId({
+                    userId: store.getters['user']?.studentObj?._id
+                }).then(res=> {
+                    console.log("chat list",res);
+                    chatroomList.list = res?.data?.returnObj;
+                })
             })
             function letsChat(item) {
                 currentChatRoom.value = item;
+                console.log("test", currentChatRoom.value);
             }
             return {
-                letsChat, currentChatRoom, chatroomList
+                letsChat, currentChatRoom, chatroomList, currentUserId
             }
         }
     })
 </script>
 
 <template>
-  <div class="wrapper" style="display: flex; width: 100%; padding-top: 100px;">
+  <div class="wrapper" style="display: flex; width: 100%;">
     <!-- Sidebar  -->
-    <nav style="color: white" id="sidebar">
-      <div style="height: 1px; border-bottom: 1px solid #00388b"></div>
+    <nav style="width:350px;">
+      <!-- <div style="height: 1px; border-bottom: 1px solid #00388b"></div> -->
       <ul class="list-unstyled components">
-        <li
-          class="active mb-3"
+        <li class="active mb-1"
           v-on:click="letsChat(item)"
           v-for="item in chatroomList.list"
-          :key="item.id"
-          v-show="item.id != currentUserId"
-        >
-          <div class="d-flex" style="cursor: pointer; padding-bottom: 15px; width: 100%">
+          :key="item._id"
+          style="border: 2px solid gray; border-radius: 5px;">
+        <!-- v-show="item.id != currentUserId" -->
+          <div v-if="item.user1Id._id !== currentUserId" class="d-flex" style="cursor: pointer; padding-left:15px; padding-top: 10px; padding-bottom: 10px; width: 100%">
             <div style="width: 30%">
             <!-- user photo -->
-              <img
-                :src="item.URL"
-                alt="user"
-                width="50px"
-                height="50px"
-                style="border-radius: 50%; background: white;"
-              />
+              <div v-if="!item.user1Id.photo"  style="display:flex;">
+                <img v-if="item.user1Id.gender === '男'" 
+                  src="../assets/img/boy.png"
+                  style="width: 70px; height: 70px; border-radius: 50%; background: white; border: 3px solid #555;"/>
+                <img v-if="item.user1Id.gender === '女'" 
+                  src="../assets/img/woman.png"
+                  style="width: 70px; height: 70px; border-radius: 50%; background: white; border: 3px solid #555;"/>
+              </div>
+              <div v-else>
+                <img
+                  :src="item.user1Id.photo"
+                  style="width: 70px; height: 70px; border-radius: 50%; background: white; border: 3px solid #555;"
+                />
+              </div>
             </div>
             <div style="padding: 10px 0px 0px; width: 50%; display: flex; justify-content: space-between">
             <!-- user name -->
-              <h6 style="line-height: 2; font-weight: 600">{{item.name}}</h6>
+              <h5 style="line-height: 2; margin-left: 20px;">{{item.user1Id.name}}</h5>
             </div>
           </div>
-          <div style="height: 1px; border-bottom: 1px solid #00388b"></div>
+
+          <div v-else class="d-flex" style="cursor: pointer; padding-left:15px; padding-top: 10px; padding-bottom: 10px; width: 100%">
+            <div style="width: 30%">
+            <!-- user photo -->
+              <div v-if="item.user2Id.photo == undefined"  style="display:flex;">
+                <img v-if="item.user2Id.gender === '男'" 
+                  src="../assets/img/boy.png"
+                  style="width: 70px; height: 70px;  border-radius: 50%; background: white; border: 3px solid #555;"/>
+                <img v-if="item.user2Id.gender === '女'" 
+                  src="../assets/img/woman.png"
+                  style="width: 70px; height: 70px; border-radius: 50%; background: white; border: 3px solid #555;"/>
+              </div>
+              <div v-else>
+                <img
+                  :src="item.user2Id.photo"
+                  style="width: 70px; height: 70px; border-radius: 50%; background: white; border: 3px solid #555;"
+                />
+              </div>
+            </div>
+            <div style="padding: 10px 0px 0px; width: 50%; display: flex; justify-content: space-between">
+            <!-- user name -->
+              <h5 style="line-height: 2; margin-left: 20px;">{{item.user2Id.name}}</h5>
+            </div>
+          </div>
+          <!-- <div style="height: 1px; border-bottom: 1px solid #00388b"></div> -->
         </li>
       </ul>
     </nav>
 
     <!-- Page Content  -->
-    <div id="content" v-if="currentPeerUser===null">
+    <div style="width: 100%; height: 84vh; border: 2px  solid gray" v-if="currentChatRoom===null">
       <div class="my-4">
-        <img :src="photoURL" width="200px" class="br-50" />
+        <img  width="200px" class="br-50" />
       </div>
-      <div>
-        <h2>Welcome {{currentUserName}},</h2>
-        <h3>Let's spread love</h3>
+      <div style="text-align: center;">
+        <h2>歡迎來到聊天室</h2>
       </div>
     </div>
-    <div v-else class="header-width">
-      <ChatBox v-bind:currentChatRoom="currentChatRoom" />
+    <div v-else style="width: 100%;">
+      <ChatBox :currentChatRoom="currentChatRoom" />
     </div>
   </div>
+
 </template>
 
 <style>

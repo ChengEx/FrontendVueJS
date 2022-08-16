@@ -75,6 +75,9 @@ export const getAllAnnouncement = () => {
 export const getChatRoomById = (_id) => {
   return APIRequest.post('/api/message/getChatRoomById', _id);
 }
+export const getChatRoomByUserId = (userId) => {
+  return APIRequest.post('/api/message/getChatRoomByUserId', userId);
+}
 export const addChatRoom = (object) => {
   return APIRequest.post('/api/message/addChatRoom', object);
 }

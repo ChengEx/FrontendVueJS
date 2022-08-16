@@ -1,21 +1,9 @@
 <script>
-    import { deleteProductById } from '../api';
     export default{
         props: {
            product: {
                type: Object
            }
-        },
-        methods: {
-            async deleteProduct(id) {
-                // await deleteProductById({
-                //     _id: id,
-                //     userId: this.$store.getters['user'].studentObj._id
-                // }).then(res => {
-                //     console.log("delete",res);
-                //     alert("成功刪除");
-                // })
-            }
         }
     }
   

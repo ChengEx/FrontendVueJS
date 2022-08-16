@@ -8,6 +8,7 @@
             const route = useRoute();
             const store = useStore();
             const chatMessage = reactive({
+                _id:'',
                 user1Id:{},
                 user2Id:{},
                 productId:{
@@ -25,9 +26,11 @@
             const currentUserId = store.getters['user']?.studentObj?._id;
             onMounted(async() => {
                 await getChatRoomById({
-                    _id: route.params.id
+                    _id: store.getters['user']?.studentObj?._id,
+                    productId: route.params.id
                 }).then(res=> {
                     console.log("chat message",res);
+                    chatMessage._id = res?.data?.returnObj._id;
                     chatMessage.user1Id = res?.data?.returnObj.user1Id;
                     chatMessage.user2Id = res?.data?.returnObj.user2Id;
                     chatMessage.productId = res?.data?.returnObj.productId;
@@ -41,17 +44,17 @@
                 let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
                 let dateTime = cDate + ' ' + cTime;
                 await addMessageByRoomId({
-                    _id: route.params.id,
+                    _id: chatMessage._id,
                     userId: store.getters['user']?.studentObj?._id,
                     content: content.trim(),
                     time: dateTime
                 }).then(res => {
                     console.log("add message",res);
                     inputValue.value = "";
-                    chatMessage.user1Id = res?.data?.returnObj.user1Id;
-                    chatMessage.user2Id = res?.data?.returnObj.user2Id;
-                    chatMessage.productId = res?.data?.returnObj.productId;
                     chatMessage.message = res?.data?.returnObj.message;
+                    // this.$nextTick(()=> {
+                    //   this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
+                    // })
                 })
             }
             return {
@@ -64,8 +67,8 @@
 <div class="container">
   <div style="display: flex; flex-direction: column; height: 100vh; padding-top: 100px;">
     <header>
-      <div v-if="chatMessage.user2Id.photo == null" style="height: 120px; background: lightgrey; display:flex;"  >
-        <img v-if="chatMessage.user2Id.gender == '男'" src="../assets/img/boy.png" alt="Avatar" style="height: 100px;
+      <div v-if="!chatMessage.user2Id.photo" style="height: 120px; background: lightgrey; display:flex;"  >
+        <img v-if="chatMessage.user2Id.gender == '男'" src="../assets/img/boy.png" style="height: 100px;
             width: 100px;
             border: 3px solid #555;
             border-color: black;
@@ -73,7 +76,7 @@
             margin-top: 10px;
             margin-left: 50px;"
             />
-        <img v-if="chatMessage.user2Id.gender == '女'" src="../assets/img/woman.png" alt="Avatar" style="height: 100px;
+        <img v-if="chatMessage.user2Id.gender == '女'" src="../assets/img/woman.png" style="height: 100px;
             width: 100px;
             border: 3px solid #555;
             border-color: black;
@@ -89,8 +92,8 @@
             <img style="width: 120px;" :src="chatMessage.productId.productDetail.images[0]"/>
         </div>
       </div>
-      <div v-else style="height: 60px; background: lightgrey">
-        <img :src="chatMessage.user2Id.photo" width="40px" alt="Avatar" style="height: 100px;
+      <div v-else style="height: 120px; background: lightgrey; display:flex;">
+        <img :src="chatMessage.user2Id.photo" width="40px" style="height: 100px;
             width: 100px;
             border: 3px solid #555;
             border-color: black;
@@ -99,6 +102,11 @@
             margin-left: 50px;"/>
         <div class="header-image">
           <h1 class="mt-4" style="margin-left: 20px;">{{ chatMessage.user2Id.name }}</h1>
+        </div>
+        <div style="margin-left: auto; display: flex">
+            <h2 style="margin-top:40px;">{{ chatMessage.productId.name }}</h2>
+            <h2 style="margin-top:40px; margin-left: 20px; margin-right: 30px;">${{ chatMessage.productId.productDetail.price }}</h2>
+            <img style="width: 120px;" :src="chatMessage.productId.productDetail.images[0]"/>
         </div>
       </div>
     </header>

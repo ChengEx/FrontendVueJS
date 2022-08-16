@@ -131,7 +131,7 @@
 #rightPage {
     margin-left: 350px;
     margin-top: 50px;
-    padding: 50px;
+    padding-top: 50px;
     /* height: 1500px; */
     width:100%;
 }
