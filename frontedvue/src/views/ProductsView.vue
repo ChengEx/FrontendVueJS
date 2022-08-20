@@ -57,7 +57,7 @@
     })
 </script>
 <template>
-    <div class="row">
+    <div class="row" style="margin-left: 50px;">
         <ProductCard v-for="(proudct, key) in productList.list" :product="proudct"></ProductCard>
     </div>
 </template>

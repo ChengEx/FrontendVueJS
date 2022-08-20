@@ -23,14 +23,14 @@
                         images: '',
                         price: 0
                     }                         
-                }
-                ,
+                },
                 message:[]
               }
             });
             const inputValue = ref("");
             const currentUserId = store.getters['user']?.studentObj?._id;
             onMounted(async() => {
+              console.log("props",props.currentChatRoom);
               chat.chatItem = props.currentChatRoom;
             }),
             watch(() => props.currentChatRoom , (newVal, oldVal) => {

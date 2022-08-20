@@ -24,7 +24,7 @@
         <!-- <div class="row">
             <product v-for="item in group" /></product>
         </div> -->
-        <div class="row route_box">
+        <div class="row route_box" style="margin-left: 50px;">
             <router-view :key="$route.fullPath"></router-view>
         </div>
     </div>
@@ -33,5 +33,6 @@
 <style>
     .route_box {
         margin-top: 50px;
+        margin-left: 50px;
     }   
 </style>

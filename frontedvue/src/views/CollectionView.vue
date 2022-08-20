@@ -84,7 +84,7 @@ export default defineComponent({
                         </div>
                         <div>
                             <button style="border-radius: 5px;">
-                                <router-link :to="`/chatMessage`" style="text-decoration: none; color: inherit;">
+                                <router-link :to="`/sellerChat/${item._id}`" style="text-decoration: none; color: inherit;">
                                     <h6 class="text-grey mt-2" style="width:100px;">與賣家確認</h6>
                                 </router-link>    
                             </button>

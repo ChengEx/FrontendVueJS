@@ -84,3 +84,12 @@ export const addChatRoom = (object) => {
 export const addMessageByRoomId = (object) => {
   return APIRequest.post('/api/message/addMessageByRoomId', object);
 }
+export const addOrder = (object) => {
+  return APIRequest.post('/api/order/addOrder', object);
+}
+export const getPersonalOrder = (userId) => {
+  return APIRequest.post('/api/order/getPersonalOrder', userId);
+}
+export const getShopOrder = (userId) => {
+  return APIRequest.post('/api/order/getShopOrder', userId);
+}

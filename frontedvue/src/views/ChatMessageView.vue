@@ -42,7 +42,7 @@
 </script>
 
 <template>
-  <div class="wrapper" style="display: flex; width: 100%;">
+  <div class="wrapper" style="display: flex; width: 100%; margin-left: 50px;">
     <!-- Sidebar  -->
     <nav style="width:350px;">
       <!-- <div style="height: 1px; border-bottom: 1px solid #00388b"></div> -->
@@ -122,8 +122,4 @@
 </template>
 
 <style>
-.wrapper {
-  display: flex;
-  width: 100%;
-}
 </style>

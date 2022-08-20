@@ -2,7 +2,7 @@
     import { defineComponent, onMounted, reactive, ref } from 'vue';
     import { useRoute } from 'vue-router';
     import { useStore } from 'vuex';
-    import { getChatRoomById, addMessageByRoomId } from '../api';
+    import { getChatRoomById, addMessageByRoomId, addOrder } from '../api';
     export default defineComponent({
         setup() {
             const route = useRoute();
@@ -43,22 +43,37 @@
                 let cDate = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
                 let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
                 let dateTime = cDate + ' ' + cTime;
-                await addMessageByRoomId({
+                if(content.trim()!==""){
+                  await addMessageByRoomId({
                     _id: chatMessage._id,
                     userId: store.getters['user']?.studentObj?._id,
                     content: content.trim(),
                     time: dateTime
+                  }).then(res => {
+                      console.log("add message",res);
+                      inputValue.value = "";
+                      chatMessage.message = res?.data?.returnObj.message;
+                  })
+                }
+                
+            }
+
+            async function sendOrder() {  
+              if(confirm("請確認是否與賣家討論好交易方式，\n例如:現場面交、商品郵寄、現金匯款等等...。\n本平台僅提供撮合買賣家交易等功能，\n請交易時自行注意詐騙!")){
+                //save order && delete collection
+                console.log("seller",chatMessage.user2Id._id);
+                console.log("productId",chatMessage.productId._id)
+                await addOrder({
+                  buyerId: store.getters['user']?.studentObj?._id,
+                  sellerId: chatMessage.user2Id._id,
+                  productId: chatMessage.productId._id
                 }).then(res => {
-                    console.log("add message",res);
-                    inputValue.value = "";
-                    chatMessage.message = res?.data?.returnObj.message;
-                    // this.$nextTick(()=> {
-                    //   this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
-                    // })
+                  console.log("add order",res);
                 })
+              }
             }
             return {
-                chatMessage, currentUserId, sendMessage, inputValue
+                chatMessage, currentUserId, sendMessage, sendOrder, inputValue
             }
         }
     })
@@ -140,12 +155,14 @@
             <button
                 class="ml-2 pointer"
                 style="margin-left: 20px; width: 80px; border-radius: 5px;"
-                @click="sendMessage(inputValue)">下單</button>
+                @click="sendOrder()">下單</button>
         </div>
       </div>
     </footer>
   </div>
 </div>
+
+
 </template>
 
 <style>
