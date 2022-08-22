@@ -10,6 +10,7 @@ export default defineComponent({
                 sellerId: {},
                 buyerId: {},
                 productId: {
+                    _id:'',
                     name:'',    
                     productDetail:{
                         images:[],
@@ -50,7 +51,7 @@ export default defineComponent({
                     <div class="p-2">
                         <h4>個人訂單</h4>
                     </div>
-                    <div v-for="(item, key) in personalOrderList.list" :key="key" class="d-flex flex-row justify-content-between align-items-center p-3 px-3 rounded" style="background: #E0E0E0;" >                  
+                    <div v-for="(item, key) in personalOrderList.list" :key="key" class="d-flex flex-row justify-content-between align-items-center p-3 mt-4 px-3 rounded" style="background: #E0E0E0;" >                  
                         <div class="mr-1">               
                             <img class="rounded" :src="item.productId.productDetail.images[0]"  width="90"/>
                         </div>
@@ -62,10 +63,17 @@ export default defineComponent({
                         </div>
                         <div class="d-flex flex-column align-items-center product-details mt-2">
                             <h6 class="font-weight-bold">{{ dateFormate(item.createdAt) }}</h6>
-                        </div> 
+                        </div>
+                        <div class="d-flex flex-column align-items-center product-details mt-2">
+                            <button style="border-radius: 5px;">
+                                <router-link :to="{path:`/sellerChat/${item.productId._id}`, query:{status: false}}" style="text-decoration: none; color: inherit;">
+                                    <h6 class="text-grey mt-2" style="width:100px;">與賣家確認</h6>
+                                </router-link>    
+                            </button>
+                        </div>
                         <div class="d-flex flex-column align-items-center product-details mt-2">
                             <h5 class="font-weight-bold">{{ item.status }}</h5>
-                        </div>      
+                        </div>
                         <!-- <div>
                             <button style="border-radius: 5px;">
                                 <router-link :to="`/sellerChat/${item._id}`" style="text-decoration: none; color: inherit;">

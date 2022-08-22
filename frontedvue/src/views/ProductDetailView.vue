@@ -98,15 +98,13 @@ import { useStore } from 'vuex';
                 
             };
             async function gotoChatRoom() {
-                console.log('1',store.getters['user']?.studentObj?._id)
-                console.log('2',product.getProduct._id);
                 await addChatRoom({
                     user1Id: store.getters['user']?.studentObj?._id,
                     user2Id: product.getProduct.createdBy._id,
                     productId: product.getProduct._id
                 }).then(res=> {
                     console.log("res is here",res?.data?.returnObj);
-                    router.push(`/sellerChat/${res?.data?.returnObj.productId}`);
+                    router.push({ path:`/sellerChat/${res?.data?.returnObj.productId}`, query:{status: true}});
                 })
 
             }
@@ -166,7 +164,7 @@ import { useStore } from 'vuex';
                                     </button>                           
                                 </div>
                                 <div v-else >
-                                    <button class="favorite_btn" @click="addCollectionSubmit()">
+                                    <button v-if="product.getProduct.createdBy._id !== student_id" class="favorite_btn" @click="addCollectionSubmit()">
                                         <img style="width:30px;" src="../assets/img/withoutHeart.png" />
                                         <span style="font-size: 20px;">加入購物車</span>
                                     </button>

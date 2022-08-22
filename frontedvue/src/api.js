@@ -93,3 +93,6 @@ export const getPersonalOrder = (userId) => {
 export const getShopOrder = (userId) => {
   return APIRequest.post('/api/order/getShopOrder', userId);
 }
+export const updateOrderStatus = (object) => {
+  return APIRequest.post('/api/order/updateOrderStatus', object);
+}

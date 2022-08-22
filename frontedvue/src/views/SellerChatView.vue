@@ -1,16 +1,20 @@
 <script>
     import { defineComponent, onMounted, reactive, ref } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
     import { useStore } from 'vuex';
     import { getChatRoomById, addMessageByRoomId, addOrder } from '../api';
     export default defineComponent({
         setup() {
             const route = useRoute();
+            const router = useRouter();
             const store = useStore();
             const chatMessage = reactive({
                 _id:'',
                 user1Id:{},
-                user2Id:{},
+                user2Id:{
+                  photo:'',
+                  gender:''
+                },
                 productId:{
                     _id: '',
                     name: '',
@@ -24,12 +28,15 @@
             })
             const inputValue = ref("");
             const currentUserId = store.getters['user']?.studentObj?._id;
+
+            const chatStatus = route.query.status;
             onMounted(async() => {
+              console.log('query', route.query.status);
                 await getChatRoomById({
                     _id: store.getters['user']?.studentObj?._id,
                     productId: route.params.id
                 }).then(res=> {
-                    console.log("chat message",res);
+                    console.log(res?.data?.returnObj);
                     chatMessage._id = res?.data?.returnObj._id;
                     chatMessage.user1Id = res?.data?.returnObj.user1Id;
                     chatMessage.user2Id = res?.data?.returnObj.user2Id;
@@ -69,11 +76,12 @@
                   productId: chatMessage.productId._id
                 }).then(res => {
                   console.log("add order",res);
+                  router.push('/personal/order');
                 })
               }
             }
             return {
-                chatMessage, currentUserId, sendMessage, sendOrder, inputValue
+                chatMessage, currentUserId, sendMessage, sendOrder, inputValue, chatStatus
             }
         }
     })
@@ -82,7 +90,7 @@
 <div class="container">
   <div style="display: flex; flex-direction: column; height: 100vh; padding-top: 100px;">
     <header>
-      <div v-if="!chatMessage.user2Id.photo" style="height: 120px; background: lightgrey; display:flex;"  >
+      <div v-if="!chatMessage.user2Id?.photo" style="height: 120px; background: lightgrey; display:flex;"  >
         <img v-if="chatMessage.user2Id.gender == '男'" src="../assets/img/boy.png" style="height: 100px;
             width: 100px;
             border: 3px solid #555;
@@ -108,7 +116,7 @@
         </div>
       </div>
       <div v-else style="height: 120px; background: lightgrey; display:flex;">
-        <img :src="chatMessage.user2Id.photo" width="40px" style="height: 100px;
+        <img :src="chatMessage.user2Id?.photo" width="40px" style="height: 100px;
             width: 100px;
             border: 3px solid #555;
             border-color: black;
@@ -152,7 +160,7 @@
                 class="ml-2 pointer"
                 style="margin-left: 20px; width: 80px; border-radius: 5px;"
                 @click="sendMessage(inputValue)">輸入</button>
-            <button
+            <button v-if="chatStatus=='true'"
                 class="ml-2 pointer"
                 style="margin-left: 20px; width: 80px; border-radius: 5px;"
                 @click="sendOrder()">下單</button>

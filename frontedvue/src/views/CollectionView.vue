@@ -2,7 +2,7 @@
 import { defineComponent, onMounted, reactive, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
-import { getCollectionById, deleteCollection } from "../api";
+import { getCollectionById, deleteCollection, addChatRoom } from "../api";
 
 export default defineComponent({
     setup() {
@@ -18,7 +18,8 @@ export default defineComponent({
                     productDetail: {
                         images: '',
                         price: 0
-                    }
+                    },
+                    createdBy:''
                 }
             ]
         })
@@ -33,7 +34,7 @@ export default defineComponent({
         });
         async function deleteProduct(id) {
             await deleteCollection({
-                productId: id,
+                collectionId: id,
                 userId: store.getters['user']?.studentObj?._id
             }).then(res => {
                 console.log(res);
@@ -41,8 +42,15 @@ export default defineComponent({
                 alert('刪除成功');
             })
         };
-        async function gotoChatMessage(id) {
-            router.push()
+        async function gotoChatRoom(productId,createdBy) {
+            await addChatRoom({
+                user1Id: store.getters['user']?.studentObj?._id,
+                user2Id: createdBy,
+                productId: productId
+            }).then(res=> {
+                console.log("goto",res?.data?.returnObj);
+                router.push({ path: `/sellerChat/${res?.data?.returnObj.productId}`, query: { status: true }});
+            })
         }
 
         const collectionTotalPrice = computed(() => {
@@ -54,7 +62,7 @@ export default defineComponent({
         })
 
         return {
-            collectionList, deleteProduct, collectionTotalPrice, gotoChatMessage
+            collectionList, deleteProduct, collectionTotalPrice, gotoChatRoom
         }
     }
 })
@@ -83,11 +91,13 @@ export default defineComponent({
                             <h6 class="font-weight-bold" style="width:100px">NT$ {{ item.productDetail.price }}</h6>
                         </div>
                         <div>
-                            <button style="border-radius: 5px;">
-                                <router-link :to="`/sellerChat/${item._id}`" style="text-decoration: none; color: inherit;">
+                            <button class="detail_btn" @click="gotoChatRoom(item._id,item.createdBy)">私訊賣家</button>
+                            <!-- <button style="border-radius: 5px;">
+                            
+                                <router-link :to="{path:`/sellerChat/${item._id}`, query:{status: true}}" style="text-decoration: none; color: inherit;">
                                     <h6 class="text-grey mt-2" style="width:100px;">與賣家確認</h6>
-                                </router-link>    
-                            </button>
+                                </router-link>
+                            </button> -->
                         </div>
                         <div class="d-flex align-items-center">
                             <button class="edit_delete_btn" @click="deleteProduct(item._id)">
